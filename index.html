@@ -1,11 +1,171 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
-    <head>
-        <title>
-            Hola
-        </title>
-    </head>
-    <body>
-        <div id="main">A</div>
-    </body>
+<head>
+  <style>
+    html{
+      height:100%;
+    }
+    body {
+      position:absolute;
+      top:0;
+      bottom:0;
+      right:0;
+      left:0;
+    }
+    #head{
+      /*border:3px solid purple;*/
+    }
+    #row-fluid{
+      /*border:3px solid blue;*/
+      overflow: auto;
+    }
+    #materias{
+      /*border:3px solid #00ffff;*/
+      max-width: 10%;
+      display: table-cell;
+    }
+    #titulo{
+      /*border: 3px solid #ff0000;*/
+      margin: auto;
+      text-align: center;
+    }
+    #container{
+      /*border:3px solid #ffff00;*/
+      display: table-cell;
+      max-width: 90%;
+    }
+    #container{
+      /*border:3px solid #ffff00;*/
+      display: table-cell;
+      max-width: 90%;
+    }
+    p{
+
+    }
+  </style>
+  <meta charset="UTF-8">
+  <title>Calendario</title>
+  <link rel='stylesheet' href='/fullcalendar-2.3.2/fullcalendar.css' />
+  <script src="/lib/jquery-2.1.4.min.js"></script>
+  <script src='/lib/moment.min.js'></script>
+  <script src='/fullcalendar-2.3.2/fullcalendar.min.js'></script>
+  <script src='/fullcalendar-2.3.2/lang/es.js'></script>
+  <script src="./papaparse/papaparse.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tinycolor/1.1.2/tinycolor.min.js"></script>
+
+</head>
+
+<body>
+  <input type="file" id="csv-file" name="files"/>
+  <div id="head"></div>
+  <div id="row-fluid">
+    <div id="materias"></div>
+    <div id="container">
+      <div id="titulo"></div>
+      <div id="calendar"></div>
+    <div>
+  </div>
+
+  <script>
+  var data = new Array();
+  var evento;
+
+  function handleFileSelect(evt) {
+    var file = evt.target.files[0];
+    evt.target.remove();
+
+    Papa.parse(file, {
+      header: true,
+      dynamicTyping: true,
+      complete: function(results) {
+        var i,last=results.data[0],j=0,k;
+        var temp = new Array();
+        var color=tinycolor.random().toString();
+        for(i=0;i<results.data.length;i++)
+        {
+          if(!(last.Materia==results.data[i].Materia && last.Profesor==results.data[i].Profesor))
+          {
+            var color=tinycolor.random().toString();
+            data.push(temp);
+            temp = new Array();
+            j++;
+          }
+          if(results.data[i].Dia=="Domingo") k=0;
+          else if(results.data[i].Dia=="Lunes") k=1;
+          else if(results.data[i].Dia=="Martes") k=2;
+          else if(results.data[i].Dia=="Miercoles") k=3;
+          else if(results.data[i].Dia=="Jueves") k=4;
+          else if(results.data[i].Dia=="Viernes") k=5;
+          else if(results.data[i].Dia=="Sabado") k=6;
+          temp.push({
+            id: j,
+            title:results.data[i].Materia,
+            start: results.data[i].Inicio, // a start time (10am in this example)
+            end: results.data[i].Fin, // an end time (6pm in this example)
+            dow: [ k ],
+            color: color
+          });
+          last=results.data[i];
+        }
+        console.log(data);
+        evento=data;
+        var out="";
+        var i;
+        for(i=0;i<evento.length;i++)
+        out+="<p onclick='test("+i+"); $(this).remove();'>"+evento[i][0].title+"</p>";
+
+        //document.getElementById("materias").innerHTML=out;
+        $("#materias").html(out);
+      }
+    });
+
+      $('#calendar').fullCalendar({
+        header:false,
+        views:{
+          agenda:{
+            titleFormat: "YYYY"
+          }
+        },
+        defaultView: 'agendaWeek',
+        columnFormat: 'dddd',
+        editable: true,
+        selectable: true,
+        allDaySlot: false,
+        height: 'auto',
+        //contentHeight: 'auto',
+        minTime: "06:00:00",
+        maxTime: "23:00:00",
+        slotEventOverlap: false,
+        defaultDate: '2015-05-08',
+        eventClick: function(calEvent,jsEvent,view){
+          $("#calendar").fullCalendar("removeEvents",calEvent.id);
+          redraw(calEvent);
+        }
+      });
+
+}
+
+function test(i){
+  var j;
+  for(j=0;j<evento[i].length;j++)
+$('#calendar').fullCalendar('renderEvent',evento[i][j],true);
+$('#calendar').fullCalendar( 'refetchEvents' );
+}
+
+function redraw(event){
+  $("#materias")[0].innerHTML+="<p onclick='test("+event.id+");$(this).remove();'>"+event.title+"</p>";
+}
+
+//var evento = new Array();
+
+
+
+
+    $(document).ready(function(){
+      $("#csv-file").change(handleFileSelect);
+    });
+
+</script>
+
+</body>
 </html>
