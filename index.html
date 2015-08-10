@@ -45,25 +45,25 @@
   </style>
   <meta charset="UTF-8">
   <title>Calendario</title>
-  <link rel='stylesheet' href='/fullcalendar-2.3.2/fullcalendar.css' />
-  <script src="/lib/jquery-2.1.4.min.js"></script>
-  <script src='/lib/moment.min.js'></script>
-  <script src='/fullcalendar-2.3.2/fullcalendar.min.js'></script>
-  <script src='/fullcalendar-2.3.2/lang/es.js'></script>
-  <script src="./papaparse/papaparse.min.js"></script>
+  <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/2.3.2/fullcalendar.css' />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.js"></script>
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.6/moment.min.js'></script>
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/2.3.2/fullcalendar.min.js'></script>
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/2.3.2/lang/es.js'></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/4.1.2/papaparse.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/tinycolor/1.1.2/tinycolor.min.js"></script>
 
 </head>
 
 <body>
-  <input type="file" id="csv-file" name="files"/>
+    <div><input type="file" id="csv-file" name="files"/></div>
   <div id="head"></div>
   <div id="row-fluid">
     <div id="materias"></div>
     <div id="container">
       <div id="titulo"></div>
       <div id="calendar"></div>
-    <div>
+    </div>
   </div>
 
   <script>
@@ -112,7 +112,7 @@
         var out="";
         var i;
         for(i=0;i<evento.length;i++)
-        out+="<p onclick='test("+i+"); $(this).remove();'>"+evento[i][0].title+"</p>";
+            out+="<div onclick='test("+i+"); $(this).remove();' style='color:"+evento[i][0].color+"'>"+evento[i][0].title+"</div>";
 
         //document.getElementById("materias").innerHTML=out;
         $("#materias").html(out);
@@ -128,7 +128,7 @@
         },
         defaultView: 'agendaWeek',
         columnFormat: 'dddd',
-        editable: true,
+        editable: false,
         selectable: true,
         allDaySlot: false,
         height: 'auto',
@@ -153,7 +153,7 @@ $('#calendar').fullCalendar( 'refetchEvents' );
 }
 
 function redraw(event){
-  $("#materias")[0].innerHTML+="<p onclick='test("+event.id+");$(this).remove();'>"+event.title+"</p>";
+  $("#materias")[0].innerHTML+="<div onclick='test("+event.id+");$(this).remove();' style='color:"+event.color+"'>"+event.title+"</div>";
 }
 
 //var evento = new Array();
